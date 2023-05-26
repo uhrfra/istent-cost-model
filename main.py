@@ -91,10 +91,13 @@ def make_person(params: PersonParameters, has_stent: bool):
         p.has_med_a = random.random() < params.prob_med_a_post
         p.has_med_p = random.random() < params.prob_med_p_post
     else:
-        p.has_med_k = random.random() < params.prob_med_k_prae
-        p.has_med_b = random.random() < params.prob_med_b_prae
-        p.has_med_a = random.random() < params.prob_med_a_prae
-        p.has_med_p = random.random() < params.prob_med_p_prae
+        while True: # Without stent at least one med must be present
+            p.has_med_k = random.random() < params.prob_med_k_prae
+            p.has_med_b = random.random() < params.prob_med_b_prae
+            p.has_med_a = random.random() < params.prob_med_a_prae
+            p.has_med_p = random.random() < params.prob_med_p_prae
+            if p.has_med_p or p.has_med_a or p.has_med_b or p.has_med_k:
+                break
 
     p.age_of_death = 101
     for i in range(p.age, 101):
@@ -155,10 +158,7 @@ for i in range(0, num_samples):
 costs_without_stent = []
 for i in range(0, num_samples):
     p = Person()
-    while True:
-        p = make_person(PersonParameters(), False)
-        if p.has_med_p or p.has_med_a or p.has_med_b or p.has_med_k:
-            break
+    p = make_person(PersonParameters(), False)
 
     print(p)
 
