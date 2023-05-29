@@ -1,3 +1,4 @@
+import os
 import random
 import statistics
 
@@ -129,60 +130,105 @@ cost_params = CostParameters()
 
 num_samples = 10000
 
+scatterplot_data = []
+
 costs_with_stent = []
+treatment_costs_with_stent = {}
+
 for i in range(0, num_samples):
     p = make_person(PersonParameters(), True)
     print(p)
 
+    med_count = 0
     years = p.age_of_death - p.age
     costs = 0.0
+    costs_per_year = 0.0
 
     if p.has_med_k:
         costs += cost_params.costs_med_k * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_k
 
     if p.has_med_b:
         costs += cost_params.costs_med_b * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_b
 
     if p.has_med_a:
         costs += cost_params.costs_med_a * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_a
 
     if p.has_med_p:
         costs += cost_params.costs_med_p * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_p
 
     if p.has_stent:
         costs += cost_params.costs_per_stent
 
     print("Costs: " + str(costs))
     costs_with_stent.append(costs)
+    scatterplot_data.append([med_count, costs, years, 0])
+    
+    current_treatment_costs = cost_params.costs_per_stent
+    for i in range(p.age, p.age_of_death):
+        current_treatment_costs += costs_per_year
+        if i-p.age in treatment_costs_with_stent:
+            treatment_costs_with_stent[i-p.age].append(current_treatment_costs)
+        else:
+            treatment_costs_with_stent[i-p.age] = [current_treatment_costs]
+         
 
 costs_without_stent = []
+treatment_costs_without_stent = {}
+
 for i in range(0, num_samples):
     p = Person()
     p = make_person(PersonParameters(), False)
-
     print(p)
 
+    med_count = 0
     years = p.age_of_death - p.age
     costs = 0.0
+    costs_per_year = 0.0
 
     if p.has_med_k:
         costs += cost_params.costs_med_k * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_k
 
     if p.has_med_b:
         costs += cost_params.costs_med_b * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_b
 
     if p.has_med_a:
         costs += cost_params.costs_med_a * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_a
 
     if p.has_med_p:
         costs += cost_params.costs_med_p * years
+        med_count += years
+        costs_per_year += cost_params.costs_med_p
 
     if p.has_stent:
         costs += cost_params.costs_per_stent
 
     print("Costs: " + str(costs))
     costs_without_stent.append(costs)
+    scatterplot_data.append([med_count, costs, years, 1])
+    
+    current_treatment_costs = 0
+    for i in range(p.age, p.age_of_death):
+        current_treatment_costs += costs_per_year
+        if i-p.age in treatment_costs_without_stent:
+            treatment_costs_without_stent[i-p.age].append(current_treatment_costs)
+        else:
+            treatment_costs_without_stent[i-p.age] = [current_treatment_costs]
 
+#Output results
 costs_with_stent_mean = statistics.mean(costs_with_stent)
 costs_with_stent_stdev = statistics.pstdev(costs_with_stent)
 print("Costs with stent: mean = {0:.2f}, stddev = {1:.2f}".format(costs_with_stent_mean, costs_with_stent_stdev))
@@ -191,3 +237,30 @@ costs_without_stent_mean = statistics.mean(costs_without_stent)
 costs_without_stent_stdev = statistics.pstdev(costs_without_stent)
 print(
     "Costs without stent: mean = {0:.2f}, stddev = {1:.2f}".format(costs_without_stent_mean, costs_without_stent_stdev))
+
+# Output plot data to files
+os.makedirs('plot_data', exist_ok = True)
+
+with open('plot_data/scatterplot.data', 'w') as f:
+    for entry in scatterplot_data:
+        f.write(str(entry[0]) + "; " + str(entry[1]) + "; " + str(entry[2]) + "; " + str(entry[3])+ ";\n")
+
+treatment_costs_with_stent_avg = []
+for i in range(0, 100):
+    if not i in treatment_costs_with_stent:
+        break
+    treatment_costs_with_stent_avg.append(sum(treatment_costs_with_stent[i])/len(treatment_costs_with_stent[i]))
+
+with open('plot_data/treatment_costs_with_stent_avg.data', 'w') as f:
+    for entry in treatment_costs_with_stent_avg:
+        f.write(str(entry) + ";\n")
+
+treatment_costs_without_stent_avg = []
+for i in range(0, 100):
+    if not i in treatment_costs_without_stent:
+        break
+    treatment_costs_without_stent_avg.append(sum(treatment_costs_without_stent[i])/len(treatment_costs_without_stent[i]))
+    
+with open('plot_data/treatment_costs_without_stent_avg.data', 'w') as f:
+    for entry in treatment_costs_without_stent_avg:
+        f.write(str(entry) + ";\n")
