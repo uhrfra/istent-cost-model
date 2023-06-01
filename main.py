@@ -130,9 +130,9 @@ cost_params = CostParameters()
 
 num_samples = 10000
 
-scatterplot_data = []
 
 costs_with_stent = []
+scatterplot_data_with_stent = []
 treatment_costs_with_stent = {}
 
 for i in range(0, num_samples):
@@ -169,7 +169,7 @@ for i in range(0, num_samples):
 
     print("Costs: " + str(costs))
     costs_with_stent.append(costs)
-    scatterplot_data.append([med_count, costs, years, 0])
+    scatterplot_data_with_stent.append([med_count, costs, years])
     
     current_treatment_costs = cost_params.costs_per_stent
     for i in range(p.age, p.age_of_death):
@@ -181,6 +181,7 @@ for i in range(0, num_samples):
          
 
 costs_without_stent = []
+scatterplot_data_without_stent = []
 treatment_costs_without_stent = {}
 
 for i in range(0, num_samples):
@@ -218,7 +219,7 @@ for i in range(0, num_samples):
 
     print("Costs: " + str(costs))
     costs_without_stent.append(costs)
-    scatterplot_data.append([med_count, costs, years, 1])
+    scatterplot_data_without_stent.append([med_count, costs, years])
     
     current_treatment_costs = 0
     for i in range(p.age, p.age_of_death):
@@ -241,9 +242,13 @@ print(
 # Output plot data to files
 os.makedirs('plot_data', exist_ok = True)
 
-with open('plot_data/scatterplot.data', 'w') as f:
-    for entry in scatterplot_data:
-        f.write(str(entry[0]) + "; " + str(entry[1]) + "; " + str(entry[2]) + "; " + str(entry[3])+ ";\n")
+with open('plot_data/scatterplot_with_stent.data', 'w') as f:
+    for entry in scatterplot_data_with_stent:
+        f.write(str(entry[0]) + "; " + str(entry[1]) + "; " + str(entry[2]) + ";\n")
+        
+with open('plot_data/scatterplot_without_stent.data', 'w') as f:
+    for entry in scatterplot_data_without_stent:
+        f.write(str(entry[0]) + "; " + str(entry[1]) + "; " + str(entry[2]) + ";\n")
 
 treatment_costs_with_stent_avg = []
 for i in range(0, 100):
