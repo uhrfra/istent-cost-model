@@ -128,7 +128,7 @@ def calculate_costs_in_life(p: Person):
 
 cost_params = CostParameters()
 
-num_samples = 1000
+num_samples = 10000
 
 
 costs_with_stent = []
