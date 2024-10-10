@@ -33,18 +33,18 @@ mortality_female = [0.00284394, 0.00019787, 0.00011989, 0.00010329, 0.0000948, 0
 
 
 class PersonParameters:
-    prob_male = 47.0 / (47.0 + 49.0)
-    age_mean = 75.25
-    age_sigma = 6.65
+    prob_male = 146.0 / (146.0 + 156.0)
+    age_mean = 75.96
+    age_sigma = 6.27
     # Units per year
-    prob_med_k_prae = 53 / 96
-    prob_med_b_prae = 60 / 96
-    prob_med_a_prae = 30 / 96
-    prob_med_p_prae = 86 / 96
-    prob_med_k_post = 34 / 96
-    prob_med_b_post = 39 / 96
-    prob_med_a_post = 52 / 96
-    prob_med_p_post = 20 / 96
+    prob_med_k_prae = 142 / 302
+    prob_med_b_prae = 146 / 302
+    prob_med_a_prae = 76 / 302
+    prob_med_p_prae = 233 / 302
+    prob_med_k_post = 78 / 302
+    prob_med_b_post = 66 / 302
+    prob_med_a_post = 42 / 302
+    prob_med_p_post = 97 / 302
     units_without_stent_mean = 2.23
     units_without_stent_sigma = 1.12
     units_with_stent_mean = 1.42
@@ -52,7 +52,7 @@ class PersonParameters:
 
 
 class CostParameters:
-    costs_med_k = 42.38 * 4
+    costs_med_k = 42.41 * 4
     costs_med_b = 17.70 * 4
     costs_med_a = 42.38 * 4
     costs_med_p = 68.00 * 4
@@ -128,7 +128,7 @@ def calculate_costs_in_life(p: Person):
 
 cost_params = CostParameters()
 
-num_samples = 10000
+num_samples = 100000
 
 
 costs_with_stent = []
